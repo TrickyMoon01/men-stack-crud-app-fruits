@@ -3,6 +3,8 @@ dotenv.config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const morgan = require('morgan');
 
 const app = express();
 
@@ -18,7 +20,8 @@ const Fruit = require('./models/fruit.js');
 
 // adding middleware for app
 app.use(express.urlencoded({extended: false}));
-
+app.use(methodOverride('_method'));
+app.use(morgan('dev'));
 
 // GET /
 app.get('/', async (requestAnimationFrame, res) => {
@@ -51,6 +54,12 @@ app.post('/fruits', async (req, res) => {
     }
 
     await Fruit.create(req.body);
+    res.redirect('/fruits');
+});
+
+// DELETE route
+app.delete('/fruits/:fruitId', async (req, res) => {
+    await Fruit.findByIdAndDelete(req.params.fruitId);
     res.redirect('/fruits');
 });
 
